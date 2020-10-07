@@ -101,7 +101,7 @@ function findURL(myString) {
 
 // Parse text and find IP addresses
 function findIP(myString) {
-	var IPRegex = /(?<=\s|^)(\d{1,3}\.){3}\d{1,3}|(?<=\s|^)(\w{1,4}\:){7}\w{1,4}|(?<=\s|^)\w{1,4}\:(\w{0,4}\:){5}\w{1,4}/g;
+	var IPRegex = /(?<=\s|^)(\d{1,3}\.){3}\d{1,3}(?=\s|$)|(?<=\s|^)(\w{1,4}\:){7}\w{1,4}(?=\s|$)|(?<=\s|^)\w{1,4}\:(\w{0,4}\:){5}\w{1,4}(?=\s|$)/g;
 	return myString.matchAll(IPRegex);
 }
 
