@@ -10,20 +10,10 @@ const vscode = require('vscode');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "se" is now active!');
-
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('se.runSecurity', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from SecurityExtension!');
-
 		let exampleString = "This is meant to contain email, IP, and url, "+
 							// Email examples
 							 "person@gmail.com "+
@@ -77,15 +67,20 @@ function activate(context) {
 							 "68000:0db8:85a3:0000:0000:8a2e:0370:7334 "+
 							 "2001:0db8:85a3:0000:0000:8a2e:0370:7334:9999 ";
 
-		console.log(exampleString);
 		let emails = findEmail(exampleString);
-		console.log(emails);
+		for (const match of emails) {
+			console.log(match[0] + " at index " + match.index);
+		}
 
 		let urls = findURL(exampleString);
-		console.log(urls);
+		for (const match of urls) {
+			console.log(match[0] + " at index " + match.index);
+		}
 
 		let ips = findIP(exampleString);
-		console.log(ips);
+		for (const match of ips) {
+			console.log(match[0] + " at index " + match.index);
+		}
 	});
 
 	context.subscriptions.push(disposable);
@@ -94,31 +89,20 @@ exports.activate = activate;
 
 // Parse text and find email addresses
 function findEmail(myString) {
-	var emailRegex = /\w+@\w+\.\w+/g;
-	return myString.match(emailRegex);
+	var emailRegex = /(?<=\s|^)\w+@\w+\.\w+/g;
+	return myString.matchAll(emailRegex);
 }
-// /https?:\/\/[\S]+|
+
 // Parse text and find urls/websites
 function findURL(myString) {
-	var urlRegex = /https?:\/\/[\S]+|\s\w+\.[a-zA-Z]+[\S]*/g;
-	var stringsArray = myString.match(urlRegex);
-
-	// We need to match a whitespace at the start of a website
-	// in order to filter out strings such as the gmail.com
-	// in person@gmail.com, we now get rid of that whitespace.
-	for(let i = 0; i < stringsArray.length; i++){
-		if (stringsArray[i].charAt(0) === " ") {
-			stringsArray[i] = stringsArray[i].substring(1);
-		}
-	}
-
-	return stringsArray;
+	var urlRegex = /(?<=\s|^)https?:\/\/[\S]+|(?<=\s|^)\w+\.[a-zA-Z]+[\S]*/g;
+	return myString.matchAll(urlRegex);
 }
 
 // Parse text and find IP addresses
 function findIP(myString) {
-	var IPRegex = /(\d{1,3}\.){3}\d{1,3}|(\w{1,4}\:){7}\w{1,4}|\w{1,4}\:(\w{0,4}\:){5}\w{1,4}/g;
-	return myString.match(IPRegex);
+	var IPRegex = /(?<=\s|^)(\d{1,3}\.){3}\d{1,3}|(?<=\s|^)(\w{1,4}\:){7}\w{1,4}|(?<=\s|^)\w{1,4}\:(\w{0,4}\:){5}\w{1,4}/g;
+	return myString.matchAll(IPRegex);
 }
 
 // this method is called when your extension is deactivated
